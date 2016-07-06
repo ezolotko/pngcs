@@ -6,7 +6,7 @@ using System.IO.Compression;
 // ONLY FOR .NET 4.5
 namespace Hjg.Pngcs.Zlib {
 
-#if NET45
+//#if NET45
 
    internal class ZlibOutputStreamMs : AZlibOutputStream {
 
@@ -33,27 +33,30 @@ namespace Hjg.Pngcs.Zlib {
             adler32.Update(array, offset, count);
         }
 
-        public override void Close() {
-            if (!initdone) doInit(); // can happen if never called write
-            if (closed) return;
-            closed = true;
-            // sigh ... no only must I close the parent stream to force a flush, but I must save a reference
-            // raw stream because (apparently) Close() sets it to null (shame on you, MS developers)
-            if (deflateStream != null) {
-                deflateStream.Close();
-            } else {         // second hack: empty input?
-                rawStream.WriteByte(3);
-                rawStream.WriteByte(0);
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (!initdone) doInit(); // can happen if never called write
+                if (closed) return;
+                closed = true;
+                // sigh ... no only must I close the parent stream to force a flush, but I must save a reference
+                // raw stream because (apparently) Close() sets it to null (shame on you, MS developers)
+                if (deflateStream != null) {
+                    deflateStream.Dispose();
+                } else {         // second hack: empty input?
+                    rawStream.WriteByte(3);
+                    rawStream.WriteByte(0);
+                }
+                // add crc
+                uint crcv = adler32.GetValue();
+                rawStream.WriteByte((byte)((crcv >> 24) & 0xFF));
+                rawStream.WriteByte((byte)((crcv >> 16) & 0xFF));
+                rawStream.WriteByte((byte)((crcv >> 8) & 0xFF));
+                rawStream.WriteByte((byte)((crcv) & 0xFF));
+                if (!leaveOpen)
+                    rawStream.Dispose();
             }
-            // add crc
-            uint crcv = adler32.GetValue();
-            rawStream.WriteByte((byte)((crcv >> 24) & 0xFF));
-            rawStream.WriteByte((byte)((crcv >> 16) & 0xFF));
-            rawStream.WriteByte((byte)((crcv >> 8) & 0xFF));
-            rawStream.WriteByte((byte)((crcv) & 0xFF));
-            if (!leaveOpen)
-                rawStream.Close();
-
         }
 
         private void initStream() {
@@ -92,5 +95,5 @@ namespace Hjg.Pngcs.Zlib {
         }
 
     }
-#endif
+//#endif
 }

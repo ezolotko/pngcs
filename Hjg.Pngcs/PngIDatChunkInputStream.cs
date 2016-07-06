@@ -66,12 +66,9 @@ namespace Hjg.Pngcs {
                 EndChunkGoForNext(); // rare, but...
         }
 
-        /// <summary>
-        /// does NOT close the associated stream!
-        /// </summary>
-        ///
-        public override void Close() {
-            base.Close(); // nothing
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing); // nothing
         }
 
         private void EndChunkGoForNext() {

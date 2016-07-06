@@ -32,7 +32,8 @@ namespace Hjg.Pngcs {
             c.WriteChunk(outputStream);
         }
 
-        public override void Close() {
+        protected override void Dispose(bool disposing)
+        {
             // closing the IDAT stream only flushes it, it does not close the underlying stream
             Flush();
         }

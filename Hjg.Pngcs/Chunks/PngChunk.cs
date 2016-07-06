@@ -6,6 +6,7 @@ namespace Hjg.Pngcs.Chunks {
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.IO;
+    using System.Reflection;
     using System.Runtime.CompilerServices;
 
 

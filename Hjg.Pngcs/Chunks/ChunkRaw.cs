@@ -112,5 +112,10 @@ namespace Hjg.Pngcs.Chunks {
         public override String ToString() {
             return "chunkid=" + Hjg.Pngcs.Chunks.ChunkHelper.ToString(IdBytes) + " len=" + Len;
         }
+
+        internal void setOffset(long offset)
+        {
+            this.offset = offset;
+        }
     }
 }

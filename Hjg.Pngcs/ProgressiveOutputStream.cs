@@ -21,9 +21,14 @@ namespace Hjg.Pngcs {
             if (size < 8) throw new PngjException("bad size for ProgressiveOutputStream: " + size);
         }
 
-        public override void Close() {
-            Flush();
-            base.Close();
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                Flush();
+            }
+
+            base.Dispose(disposing);
         }
 
         public override void Flush() {
@@ -41,6 +46,16 @@ namespace Hjg.Pngcs {
             CheckFlushBuffer(false);
         }
 
+        byte[] GetBuffer()
+        {
+            ArraySegment<byte> segment;
+            if (!TryGetBuffer(out segment))
+                throw new Exception("TryGetBuffer failed.");
+            
+            var part = new byte[segment.Count];
+            Array.Copy(segment.Array, segment.Offset, part, 0, segment.Count);
+            return part;
+        }
 
         /// <summary>
         /// if it's time to flush data (or if forced==true) calls abstract method
@@ -49,6 +64,7 @@ namespace Hjg.Pngcs {
         ///
         private void CheckFlushBuffer(bool forced) {
             int count = (int)Position;
+
             byte[] buf = GetBuffer();
             while (forced || count >= size) {
                 int nb = size;

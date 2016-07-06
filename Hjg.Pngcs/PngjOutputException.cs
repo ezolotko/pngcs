@@ -10,7 +10,6 @@ namespace Hjg.Pngcs {
     /// <summary>
     /// Exception associated with input (reading) operations
     /// </summary>
-    [Serializable]
     public class PngjOutputException : PngjException {
         private const long serialVersionUID = 1L;
 
